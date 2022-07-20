@@ -47,7 +47,7 @@ USERNAME=$(who am i | awk '{print $1}')
 #===============================================#
 #                  DEPLOY NODE                  #
 #===============================================#
-deploy_node() {
+Deploy_node() {
 # Check if elevated
 if [ "$EUID" -ne 0 ]
   then echo "${b} Run as elevated user (sudo)${n}"
