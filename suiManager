@@ -42,7 +42,7 @@ reset=$(tput sgr0)
 #                   VARIABLES                   #
 #===============================================#
 WORKING_DIR=$(pwd)
-USERNAME=$(who am i | awk '{print $1}')
+USERNAME=$(logname)
 
 #===============================================#
 #                  DEPLOY NODE                  #
@@ -53,6 +53,9 @@ if [ "$EUID" -ne 0 ]
   then echo "${b} Run as elevated user (sudo)${n}"
   exit
 fi
+
+echo "${b}Installing Rust and Cargo.${reset}"
+yes | curl https://sh.rustup.rs -sSf | sh
 
 echo ""
 echo ""
