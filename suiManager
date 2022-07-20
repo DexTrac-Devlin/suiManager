@@ -91,7 +91,7 @@ echo -e "# Update this value to the location you want Sui to store its database\
 \n
 \ngenesis:\
 \n  # Update this to the location of where the genesis file is stored\
-\n  genesis-file-location: \"/home/$USERNAME/suiData/genesisFiles/genesis.blob\"" > /home/devtrace/test
+\n  genesis-file-location: \"/home/$USERNAME/suiData/genesisFiles/genesis.blob\"" > /home/$USERNAME/suiData/fullnode.yaml
 
 echo ""
 echo "${b}Downloading Genesis File.${reset}"
