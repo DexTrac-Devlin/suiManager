@@ -81,19 +81,17 @@ echo ""
 echo "${b}Creating Configuration File.${reset}"
 echo "    Location: /home/$USERNAME/suiData/fullnode.yaml."
 touch ~/suiData/fullnode.yaml
-cat << EOF > /home/$USERNAME/fullnode.yaml
-# Update this value to the location you want Sui to store its database
-db-path: "/home/$USERNAME/suiData/suidb"
-
-# 0.0.0.0 Sets the service to listen on any address.
-network-address: "/dns/localhost/tcp/8080/http"
-metrics-address: "0.0.0.0:9184"
-json-rpc-address: "0.0.0.0:9000"
-
-genesis:
-  # Update this to the location of where the genesis file is stored
-  genesis-file-location: "/home/$USERNAME/suiData/genesisFiles/genesis.blob"
-EOF
+echo -e "# Update this value to the location you want Sui to store its database\
+\ndb-path: \"/home/$USERNAME/suiData/suidb\" \
+\n
+\n# 0.0.0.0 Sets the service to listen on any address.\
+\nnetwork-address: \"/dns/localhost/tcp/8080/http\"\
+\nmetrics-address: \"0.0.0.0:9184\"\
+\njson-rpc-address: \"0.0.0.0:9000\"\
+\n
+\ngenesis:\
+\n  # Update this to the location of where the genesis file is stored\
+\n  genesis-file-location: \"/home/$USERNAME/suiData/genesisFiles/genesis.blob\"" > /home/devtrace/test
 
 echo ""
 echo "${b}Downloading Genesis File.${reset}"
