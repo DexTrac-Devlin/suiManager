@@ -1,0 +1,231 @@
+#!/bin/bash
+# This script is intended to manage and maintain
+# your Mysten Sui node.
+
+#                    .@@,
+#                   %@@@@@
+#                 ,@@@@@@@@(
+#                @@@@&  .@@@@,
+#               @@@@.     @@@@.
+#             #@@@@        (@@@@                                                          ,@(.
+#            @@@@@          .@@@@/                                                       *@@@@
+#          .@@@@@.            @@@@%
+#         @@@@@@@.             .@@@@.                   .
+#       .@@@@.@@@@.              (@@@&          .&@@@@@@@@@@*     %@@@          ,@@@      @@@*
+#      (@@@@   &@@@&              (@@@@.        @@@.      (@&.    %@@@          ,@@@      @@@*
+#    .@@@@*     *@@@@@&.            @@@@/       @@@.              %@@@          ,@@@      @@@*
+#    @@@@          ,@@@@@@@@,        @@@@/      .@@@@@@@.*        %@@@          ,@@@      @@@*
+#   @@@@*               (@@@@@@@.     @@@@           *((@@@@@.    %@@@          ,@@@.     @@@*
+#   &@@@                    .@@@@@/   *@@@*               .@@@.   %@@&          .@@@.     @@@*
+#   @@@@                       .@@@@. @@@@*   .@@@@       (@@@,    @@@@,      ,@@@@@.     @@@*
+#   .@@@(                        @@@@.@@@@      ,@@@@@@@@@@@(       ,@@@@@@@@@@#,@@@.     @@@*
+#    *@@@/                        @@@@@@@
+#     *@@@@.                      @@@@@&.
+#       (@@@@%.                 ,@@@@@.
+#         #@@@@@@//        ./&@@@@@%.
+#            .#@@@@@@@@@@@@@@@@@*
+#                   .......
+
+#===============================================#
+#              FORMATTING VARIABLES             #
+#===============================================#
+# bold
+b=$(tput bold)
+# blue foreground
+blue_fg=$(tput setaf 6)
+# yello foreground
+yellow_fg=$(tput setaf 3)
+# reset to default
+reset=$(tput sgr0)
+
+#===============================================#
+#                   VARIABLES                   #
+#===============================================#
+WORKING_DIR=$(pwd)
+USERNAME=$(who am i | awk '{print $1}')
+
+#===============================================#
+#                  DEPLOY NODE                  #
+#===============================================#
+deploy_node() {
+# Check if elevated
+if [ "$EUID" -ne 0 ]
+  then echo "${b} Run as elevated user (sudo)${n}"
+  exit
+fi
+
+echo ""
+echo ""
+cd ~/
+echo "${b}Creating directories.${reset}"
+echo "    Location: /home/$USERNAME/suiData"
+echo "    Location: /home/$USERNAME/suiData/genesisFiles"
+echo "    Location: /home/$USERNAME/suiData/suidb"
+mkdir -p ~/suiData/genesisFiles
+mkdir ~/suiData/suidb
+
+echo ""
+echo "${b}Cloning repository.${reset}"
+echo "    Location: /home/$USERNAME/sui"
+git clone https://github.com/MystenLabs/sui.git
+cd ~/sui
+git remote add upstream https://github.com/MystenLabs/sui
+git fetch upstream
+git checkout -B devnet --track upstream/devnet
+cargo build --release -p sui-node
+
+echo ""
+echo "${b}Creating Configuration File.${reset}"
+echo "    Location: /home/$USERNAME/suiData/fullnode.yaml."
+touch ~/suiData/fullnode.yaml
+cat << EOF >> /home/$USERNAME/fullnode.yaml
+# Update this value to the location you want Sui to store its database
+db-path: "/home/$USERNAME/suiData/suidb"
+
+# 0.0.0.0 Sets the service to listen on any address.
+network-address: "/dns/localhost/tcp/8080/http"
+metrics-address: "0.0.0.0:9184"
+json-rpc-address: "0.0.0.0:9000"
+
+genesis:
+  # Update this to the location of where the genesis file is stored
+  genesis-file-location: "/home/$USERNAME/suiData/genesisFiles/genesis.blob"
+EOF
+
+echo ""
+echo "${b}Downloading Genesis File.${reset}"
+echo "    Location: /home/$USERNAME/suiData/genesisFiles/genesis.blob"
+
+wget -O ~/suiData/genesisFiles/genesis.blob https://github.com/MystenLabs/sui-genesis/raw/main/devnet/genesis.blob
+
+echo ""
+echo "${b}Creating systemd service.${reset}"
+echo "    Location: /etc/systemd/system/suid.service"
+touch /etc/systemd/system/suid.service
+cat << EOF >> /etc/systemd/system/suid.service
+Unit]
+Description=Mysten Sui Node
+After=network.target auditd.service
+Wants=network.target
+
+[Service]
+Type=simple
+User=$USERNAME
+WorkingDirectory=/home/$USERNAME/sui/
+TimeoutStartSec=0
+TimeoutStopSec=120
+ExecStart=/home/$USERNAME/sui/target/release/sui-node --config-path /home/$USERNAME/suiData/fullnode.yaml
+Restart=always
+RestartSec=20s
+
+[Install]
+WantedBy=multi-user.target
+RequiredBy=swarm.service
+Alias=suid.service
+EOF
+
+echo ""
+echo "${b}Enabling and starting suid.service.${reset}"
+systemctl enable /etc/systemd/system/suid.service
+systemctl start /etc/systemd/system/suid.service
+
+echo ""
+echo "${b}Press Ctrl + c to exit logs."
+echo "    We want to see ${blue_fg}SuiNode started!${reset}"
+echo ""
+sudo journalctl -f -u suid.service
+}
+
+#===============================================#
+#                UPGRADE NODE                   #
+#===============================================#
+Upgrade_node() {
+# Check if elevated
+if [ "$EUID" -ne 0 ]
+  then echo "${b} Run as elevated user (sudo)${n}"
+  exit
+fi
+
+echo "${b}Upgrading Mysten Sui node."
+echo "    Stopping suid.service."
+systemctl stop suid.service
+
+echo ""
+echo "    Removing old files."
+rm -rf /home/$USERNAME/suiData/suidb/*
+rm /home/$USERNAME/suiData/genesisFiles/genesis.blob
+rm -rf /home/$USERNAME/sui
+source /home/$USERNAME/.cargo/env
+cd ~/
+
+echo ""
+echo "    Cloning repository."
+git clone https://github.com/MystenLabs/sui.git
+cd ~/sui
+git remote add upstream https://github.com/MystenLabs/sui
+git fetch upstream
+git checkout -B devnet --track upstream/devnet
+cargo build --release -p sui-node
+
+echo ""
+echo "    Downloading new genesis.blob."
+wget -O /home/$USERNAME/suiData/genesisFiles/genesis.blob https://github.com/MystenLabs/sui-genesis/raw/main/devnet/genesis.blob
+
+echo ""
+echo "    Starting suid.service"
+systemctl start suid.service
+
+echo "${b}Press Ctrl + c to exit logs."
+echo "    We want to see ${blue_fg}SuiNode started!${reset}"
+echo ""
+sudo journalctl -f -u suid.service
+}
+
+#===============================================#
+#                     HELP                      #
+#===============================================#
+Help() {
+  # Display Help
+  echo "This script helps you deploy and upgrade your Mysten Sui node."
+  echo
+  echo "Usage:  ${b}suiManager option${reset}"
+  echo ""
+  echo "options:"
+  echo ""
+  echo "-d        Deploys new Mysten Sui node."
+  echo "${b}            ex: suiManager -d${reset}"
+  echo ""
+  echo "-u        Upgrades existing Mysten Sui node."
+  echo "${b}            ex: suiManager -u${reset}"
+  echo ""
+  echo "-h        Print this Help function and exit."
+  echo ""
+}
+
+#===============================================#
+#                     MAIN                      #
+#===============================================#
+while getopts ":duh" option; do
+   case ${option} in
+      d) # deploy new Mysten Sui node
+         Deploy_node
+         exit
+         ;;
+      u) # upgrade existing Mysten Sui node
+         Upgrade_node
+         exit
+         ;;
+      h) # Display Help
+         Help
+         exit
+         ;;
+      \?) # Invalid Option
+         echo "Invalid option: $OPTARG" 1>&2
+         exit 1
+         ;;
+      :) # Invalid Option
+         echo "Invalid option: $OPTARG requires an argument" 1>&2
+         exit 1
+         ;;
+   esac
+done
