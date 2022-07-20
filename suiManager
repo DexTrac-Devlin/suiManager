@@ -103,27 +103,25 @@ echo ""
 echo "${b}Creating systemd service.${reset}"
 echo "    Location: /etc/systemd/system/suid.service"
 touch /etc/systemd/system/suid.service
-cat << EOF > /etc/systemd/system/suid.service
-Unit]
-Description=Mysten Sui Node
-After=network.target auditd.service
-Wants=network.target
-
-[Service]
-Type=simple
-User=$USERNAME
-WorkingDirectory=/home/$USERNAME/sui/
-TimeoutStartSec=0
-TimeoutStopSec=120
-ExecStart=/home/$USERNAME/sui/target/release/sui-node --config-path /home/$USERNAME/suiData/fullnode.yaml
-Restart=always
-RestartSec=20s
-
-[Install]
-WantedBy=multi-user.target
-RequiredBy=swarm.service
-Alias=suid.service
-EOF
+echo -e "[Unit]\
+\nDescription=Mysten Sui Node\
+\nAfter=network.target auditd.service\
+\nWants=network.target\
+\n
+\n[Service]\
+\nType=simple\
+\nUser=$USERNAME\
+\nWorkingDirectory=/home/$USERNAME/sui/\
+\nTimeoutStartSec=0\
+\nTimeoutStopSec=120\
+\nExecStart=/home/$USERNAME/sui/target/release/sui-node --config-path /home/$USERNAME/suiData/fullnode.yaml\
+\nRestart=always\
+\nRestartSec=20s\
+\n
+\[Install]\
+\nWantedBy=multi-user.target\
+\nRequiredBy=swarm.service\
+\nAlias=suid.service" > /etc/systemd/system/suid.service
 
 echo ""
 echo "${b}Enabling and starting suid.service.${reset}"
