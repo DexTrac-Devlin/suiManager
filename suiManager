@@ -81,7 +81,7 @@ echo ""
 echo "${b}Creating Configuration File.${reset}"
 echo "    Location: /home/$USERNAME/suiData/fullnode.yaml."
 touch ~/suiData/fullnode.yaml
-cat << EOF >> /home/$USERNAME/fullnode.yaml
+cat << EOF > /home/$USERNAME/fullnode.yaml
 # Update this value to the location you want Sui to store its database
 db-path: "/home/$USERNAME/suiData/suidb"
 
@@ -105,7 +105,7 @@ echo ""
 echo "${b}Creating systemd service.${reset}"
 echo "    Location: /etc/systemd/system/suid.service"
 touch /etc/systemd/system/suid.service
-cat << EOF >> /etc/systemd/system/suid.service
+cat << EOF > /etc/systemd/system/suid.service
 Unit]
 Description=Mysten Sui Node
 After=network.target auditd.service
