@@ -7,10 +7,10 @@ Single script to deploy and upgrade your Mysten Sui node
 
 ---
 ## General Directions
-* Clone this repository
-* Change directories into the new directory (```cd suiManager```)
-* Add executable permissions to the ```chmod +x suiManager``` file
-* Run the script (```suiManager -h```)
+* Clone this repository.
+* Change directories into the new directory (```cd suiManager```).
+* Add executable permissions to the suiManager file (```chmod +x suiManager```).
+* Run the script (```suiManager -h```).
 
 ---
 ## Utilization
