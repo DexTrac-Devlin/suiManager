@@ -54,19 +54,19 @@ curl https://sh.rustup.rs -sSf | sh
 
 echo ""
 echo ""
-cd ~/
+cd /home/$USERNAME/
 echo "${b}Creating directories.${reset}"
 echo "    Location: /home/$USERNAME/suiData"
 echo "    Location: /home/$USERNAME/suiData/genesisFiles"
 echo "    Location: /home/$USERNAME/suiData/suidb"
-mkdir -p ~/suiData/genesisFiles
-mkdir ~/suiData/suidb
+mkdir -p /home/$USERNAME/suiData/genesisFiles
+mkdir /home/$USERNAME/suiData/suidb
 
 echo ""
 echo "${b}Cloning repository.${reset}"
 echo "    Location: /home/$USERNAME/sui"
 git clone https://github.com/MystenLabs/sui.git
-cd ~/sui
+cd /home/$USERNAME/sui
 git remote add upstream https://github.com/MystenLabs/sui
 git fetch upstream
 git checkout -B devnet --track upstream/devnet
@@ -75,8 +75,8 @@ cargo build --release -p sui-node
 echo ""
 echo "${b}Creating Configuration File.${reset}"
 echo "    Location: /home/$USERNAME/suiData/fullnode.yaml."
-touch ~/suiData/fullnode.yaml
-cat << EOF >> /home/$USERNAME/fullnode.yaml
+touch /home/$USERNAME/suiData/fullnode.yaml
+cat << EOF >> /home/$USERNAME/suiData/fullnode.yaml
 # Update this value to the location you want Sui to store its database
 db-path: "/home/$USERNAME/suiData/suidb"
 
@@ -94,7 +94,7 @@ echo ""
 echo "${b}Downloading Genesis File.${reset}"
 echo "    Location: /home/$USERNAME/suiData/genesisFiles/genesis.blob"
 
-wget -O ~/suiData/genesisFiles/genesis.blob https://github.com/MystenLabs/sui-genesis/raw/main/devnet/genesis.blob
+wget -O /home/$USERNAME/suiData/genesisFiles/genesis.blob https://github.com/MystenLabs/sui-genesis/raw/main/devnet/genesis.blob
 
 echo ""
 echo "${b}Creating systemd service.${reset}"
@@ -150,12 +150,12 @@ sudo rm -rf /home/$USERNAME/suiData/suidb/*
 sudo rm /home/$USERNAME/suiData/genesisFiles/genesis.blob
 sudo rm -rf /home/$USERNAME/sui
 source /home/$USERNAME/.cargo/env
-cd ~/
+cd /home/$USERNAME/
 
 echo ""
 echo "    Cloning repository."
 git clone https://github.com/MystenLabs/sui.git
-cd ~/sui
+cd /home/$USERNAME/sui
 git remote add upstream https://github.com/MystenLabs/sui
 git fetch upstream
 git checkout -B devnet --track upstream/devnet
