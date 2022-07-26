@@ -48,11 +48,6 @@ USERNAME=$(logname)
 #                  DEPLOY NODE                  #
 #===============================================#
 Deploy_node() {
-# Check if elevated
-if [ "$EUID" -ne 0 ]
-  then echo "${b} Run as elevated user (sudo)${n}"
-  exit
-fi
 
 echo "${b}Installing Rust and Cargo.${reset}"
 curl https://sh.rustup.rs -sSf | sh
@@ -102,8 +97,8 @@ wget -O ~/suiData/genesisFiles/genesis.blob https://github.com/MystenLabs/sui-ge
 echo ""
 echo "${b}Creating systemd service.${reset}"
 echo "    Location: /etc/systemd/system/suid.service"
-touch /etc/systemd/system/suid.service
-echo -e "[Unit]\
+sudo touch /etc/systemd/system/suid.service
+sudo echo -e "[Unit]\
 \nDescription=Mysten Sui Node\
 \nAfter=network.target auditd.service\
 \nWants=network.target\
@@ -125,8 +120,8 @@ echo -e "[Unit]\
 
 echo ""
 echo "${b}Enabling and starting suid.service.${reset}"
-systemctl enable /etc/systemd/system/suid.service
-systemctl start /etc/systemd/system/suid.service
+sudo systemctl enable /etc/systemd/system/suid.service
+sudo systemctl start /etc/systemd/system/suid.service
 
 echo ""
 echo "${b}Press Ctrl + c to exit logs."
@@ -139,21 +134,16 @@ sudo journalctl -f -u suid.service
 #                UPGRADE NODE                   #
 #===============================================#
 Upgrade_node() {
-# Check if elevated
-if [ "$EUID" -ne 0 ]
-  then echo "${b} Run as elevated user (sudo)${n}"
-  exit
-fi
 
 echo "${b}Upgrading Mysten Sui node."
 echo "    Stopping suid.service."
-systemctl stop suid.service
+sudo systemctl stop suid.service
 
 echo ""
 echo "    Removing old files."
-rm -rf /home/$USERNAME/suiData/suidb/*
-rm /home/$USERNAME/suiData/genesisFiles/genesis.blob
-rm -rf /home/$USERNAME/sui
+sudo rm -rf /home/$USERNAME/suiData/suidb/*
+sudo rm /home/$USERNAME/suiData/genesisFiles/genesis.blob
+sudo rm -rf /home/$USERNAME/sui
 source /home/$USERNAME/.cargo/env
 cd ~/
 
@@ -172,7 +162,7 @@ wget -O /home/$USERNAME/suiData/genesisFiles/genesis.blob https://github.com/Mys
 
 echo ""
 echo "    Starting suid.service"
-systemctl start suid.service
+sudo systemctl start suid.service
 
 echo "${b}Press Ctrl + c to exit logs."
 echo "    We want to see ${blue_fg}SuiNode started!${reset}"
