@@ -59,9 +59,11 @@ read USERNAME
 echo "${b}Installing Rust and Cargo.${reset}"
 apt install -y curl git wget
 runuser -u $USERNAME -- curl https://sh.rustup.rs -sSf | runuser -u $USERNAME -- sh
-runuser -u $USERNAME -- source /home/$USERNAME/.cargo/env
-runuser -u $USERNAME -- source /home/$USERNAME/.profile
-runuser -u $USERNAME -- source /home/$USERNAME/.bashrc
+
+
+source /home/$USERNAME/.cargo/env
+source /home/$USERNAME/.profile
+source /home/$USERNAME/.bashrc
 
 
 echo "    Installed cargo version:"
@@ -85,7 +87,7 @@ cd /home/$USERNAME/sui
 git remote add upstream https://github.com/MystenLabs/sui
 git fetch upstream
 git checkout -B devnet --track upstream/devnet
-cargo build --release -p sui-node
+runuser -u $USERNAME -- cargo build --release -p sui-node
 
 echo ""
 echo "${b}Creating Configuration File.${reset}"
