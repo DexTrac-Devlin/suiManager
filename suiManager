@@ -59,6 +59,7 @@ read USERNAME
 echo "${b}Installing Rust and Cargo.${reset}"
 apt install -y curl git wget
 curl https://sh.rustup.rs -sSf | sh
+source "/home/$USERNAME/.cargo/env"
 
 echo ""
 echo ""
