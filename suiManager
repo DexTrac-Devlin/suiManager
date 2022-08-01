@@ -56,6 +56,10 @@ fi
 echo "${b}Please enter your username.${reset}"
 read USERNAME
 
+echo "${b}Installing dependencies.${reset}"
+apt get install tzdata git ca-certificates curl build-essential libssl-dev pkg-config libclang-dev cmake
+
+
 echo "${b}Installing Rust and Cargo.${reset}"
 apt install -y curl git wget
 runuser -u $USERNAME -- curl https://sh.rustup.rs -sSf | runuser -u $USERNAME -- sh
