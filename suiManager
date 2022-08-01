@@ -57,7 +57,7 @@ echo "${b}Please enter your username.${reset}"
 read USERNAME
 
 echo "${b}Installing dependencies.${reset}"
-apt get install tzdata git ca-certificates curl build-essential libssl-dev pkg-config libclang-dev cmake
+apt install tzdata git ca-certificates curl build-essential libssl-dev pkg-config libclang-dev cmake
 
 
 echo "${b}Installing Rust and Cargo.${reset}"
