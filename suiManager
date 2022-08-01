@@ -57,7 +57,7 @@ echo "${b}Please enter your username.${reset}"
 read USERNAME
 
 echo "${b}Installing Rust and Cargo.${reset}"
-apt install curl git wget
+apt install -y curl git wget
 curl https://sh.rustup.rs -sSf | sh
 
 echo ""
