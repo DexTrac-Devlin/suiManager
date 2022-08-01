@@ -93,7 +93,7 @@ git checkout -B devnet --track upstream/devnet
 
 echo ""
 echo "${b}Compiling binary.${reset}"
-runuser -u $USERNAME -- cargo build --release -p sui-node
+sudo -u $USERNAME bash -c '/home/$USER/.cargo/bin/cargo build --verbose --release -p sui-node'
 
 echo ""
 echo "${b}Creating Configuration File.${reset}"
@@ -194,7 +194,7 @@ git checkout -B devnet --track upstream/devnet
 
 echo ""
 echo "${b}Compiling binary.${reset}"
-runuser -u $USERNAME -- cargo build --release -p sui-node
+sudo -u $USERNAME bash -c '/home/$USER/.cargo/bin/cargo build --verbose --release -p sui-node'
 
 echo ""
 echo "    Downloading new genesis.blob."
