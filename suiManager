@@ -90,6 +90,9 @@ cd /home/$USERNAME/sui
 git remote add upstream https://github.com/MystenLabs/sui
 git fetch upstream
 git checkout -B devnet --track upstream/devnet
+
+echo ""
+echo "${b}Compiling binary.${reset}"
 runuser -u $USERNAME -- cargo build --release -p sui-node
 
 echo ""
@@ -182,12 +185,16 @@ cd /home/$USERNAME/
 
 echo ""
 echo "    Cloning repository."
-git clone --quiet https://github.com/MystenLabs/sui.git && chown -R $USERNAME: /home/$USERNAME/sui
+git clone --quiet https://github.com/MystenLabs/sui.git
+chown -R $USERNAME: /home/$USERNAME/sui
 cd /home/$USERNAME/sui
 git remote add upstream https://github.com/MystenLabs/sui
 git fetch upstream
 git checkout -B devnet --track upstream/devnet
-cargo build --release -p sui-node
+
+echo ""
+echo "${b}Compiling binary.${reset}"
+runuser -u $USERNAME -- cargo build --release -p sui-node
 
 echo ""
 echo "    Downloading new genesis.blob."
