@@ -48,6 +48,11 @@ WORKING_DIR=$(pwd)
 #===============================================#
 Deploy_node() {
 
+if [ "$EUID" -ne 0 ]
+  then echo "${b} Run as elevated user (sudo)${n}"
+  exit
+fi
+
 echo "${b}Please enter your username.${reset}"
 read USERNAME
 
@@ -141,6 +146,11 @@ sudo journalctl -f -u suid.service
 #                UPGRADE NODE                   #
 #===============================================#
 Upgrade_node() {
+
+if [ "$EUID" -ne 0 ]
+  then echo "${b} Run as elevated user (sudo)${n}"
+  exit
+fi
 
 echo "${b}Please enter your username.${reset}"
 read USERNAME
