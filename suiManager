@@ -62,6 +62,7 @@ runuser -u $USERNAME -- curl https://sh.rustup.rs -sSf | runuser -u $USERNAME --
 
 sed -i 's|$HOME|/home/$USERNAME|g' /home/$USERNAME/.cargo/env
 sed -i 's|PATH="$HOME/.local/bin:$PATH"|PATH="/home/$USERNAME/.local/bin:$PATH"|g' /home/$USERNAME/.profile
+sed -i 's|"$HOME/.cargo/env"|"/home/$USERNAME/.cargo/env"|g' /home/$USERNAME/.profile
 sed -i 's|"$HOME/.cargo/env"|"/home/$USERNAME/.cargo/env"|g' /home/$USERNAME/.bashrc
 source /home/$USERNAME/.cargo/env
 source /home/$USERNAME/.profile
