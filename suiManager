@@ -154,8 +154,8 @@ EOF
 
 echo ""
 echo "${b}Enabling and starting suid.service.${reset}"
-sudo systemctl enable /etc/systemd/system/suid.service
-sudo systemctl start /etc/systemd/system/suid.service
+sudo systemctl enable suid.service
+sudo systemctl start suid.service
 
 echo ""
 echo "${b}Press Ctrl + c to exit logs."
