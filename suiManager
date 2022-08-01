@@ -58,7 +58,7 @@ read USERNAME
 
 echo "${b}Installing Rust and Cargo.${reset}"
 apt install -y curl git wget
-runuser -u $USERNAME -- curl https://sh.rustup.rs -sSf | sh
+runuser -u $USERNAME -- curl https://sh.rustup.rs -sSf | runuser -u $USERNAME -- sh
 source "/home/$USERNAME/.cargo/env"
 
 echo "    Installed cargo version:"
