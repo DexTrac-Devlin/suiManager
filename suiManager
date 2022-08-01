@@ -42,12 +42,14 @@ reset=$(tput sgr0)
 #                   VARIABLES                   #
 #===============================================#
 WORKING_DIR=$(pwd)
-USERNAME=$(logname)
 
 #===============================================#
 #                  DEPLOY NODE                  #
 #===============================================#
 Deploy_node() {
+
+echo "${b}Please enter your username.${reset}"
+read USERNAME
 
 echo "${b}Installing Rust and Cargo.${reset}"
 curl https://sh.rustup.rs -sSf | sh
@@ -60,12 +62,12 @@ echo "    Location: /home/$USERNAME/suiData"
 echo "    Location: /home/$USERNAME/suiData/genesisFiles"
 echo "    Location: /home/$USERNAME/suiData/suidb"
 mkdir -p /home/$USERNAME/suiData/genesisFiles
-mkdir /home/$USERNAME/suiData/suidb
+mkdir /home/$USERNAME/suiData/suidb && chown -R $USERNAME: /home/$USERNAME/suiData
 
 echo ""
 echo "${b}Cloning repository.${reset}"
 echo "    Location: /home/$USERNAME/sui"
-git clone https://github.com/MystenLabs/sui.git
+git clone --queit https://github.com/MystenLabs/sui.git && chown -R $USERNAME: /home/$USERNAME/sui
 cd /home/$USERNAME/sui
 git remote add upstream https://github.com/MystenLabs/sui
 git fetch upstream
@@ -140,6 +142,9 @@ sudo journalctl -f -u suid.service
 #===============================================#
 Upgrade_node() {
 
+echo "${b}Please enter your username.${reset}"
+read USERNAME
+
 echo "${b}Upgrading Mysten Sui node."
 echo "    Stopping suid.service."
 sudo systemctl stop suid.service
@@ -154,7 +159,7 @@ cd /home/$USERNAME/
 
 echo ""
 echo "    Cloning repository."
-git clone https://github.com/MystenLabs/sui.git
+git clone --quiet https://github.com/MystenLabs/sui.git && chown -R $USERNAME: /home/$USERNAME/sui
 cd /home/$USERNAME/sui
 git remote add upstream https://github.com/MystenLabs/sui
 git fetch upstream
@@ -163,12 +168,15 @@ cargo build --release -p sui-node
 
 echo ""
 echo "    Downloading new genesis.blob."
+mkdir -p /home/$USERNAME/suiData/genesisFiles
+mkdir /home/$USERNAME/suiData/suidb && chown -R $USERNAME: /home/$USERNAME/suiData
 wget -O /home/$USERNAME/suiData/genesisFiles/genesis.blob https://github.com/MystenLabs/sui-genesis/raw/main/devnet/genesis.blob
 
 echo ""
 echo "    Starting suid.service"
 sudo systemctl start suid.service
 
+echo "=================="
 echo "${b}Press Ctrl + c to exit logs."
 echo "    We want to see ${blue_fg}SuiNode started!${reset}"
 echo ""
