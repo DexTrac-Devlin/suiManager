@@ -72,7 +72,7 @@ mkdir /home/$USERNAME/suiData/suidb && chown -R $USERNAME: /home/$USERNAME/suiDa
 echo ""
 echo "${b}Cloning repository.${reset}"
 echo "    Location: /home/$USERNAME/sui"
-git clone --queit https://github.com/MystenLabs/sui.git && chown -R $USERNAME: /home/$USERNAME/sui
+git clone --quiet https://github.com/MystenLabs/sui.git && chown -R $USERNAME: /home/$USERNAME/sui
 cd /home/$USERNAME/sui
 git remote add upstream https://github.com/MystenLabs/sui
 git fetch upstream
